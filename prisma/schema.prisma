@@ -11,12 +11,13 @@ datasource db {
 }
 
 model User {
-  id       Int    @id @unique @default(autoincrement())
-  name     String @db.VarChar(50)
-  email    String @unique @db.VarChar(50)
-  password String @db.VarChar(50)
+  id       Int     @id @unique @default(autoincrement())
+  name     String  @db.VarChar(50)
+  email    String  @unique @db.VarChar(50)
+  password String  @db.VarChar(50)
   phone    String
-  role     Role   @default(Admin)
+  role     Role    @default(Admin)
+  order    Order[]
 }
 
 enum Role {
@@ -26,14 +27,13 @@ enum Role {
 }
 
 model Product {
-  id          Int      @id @default(autoincrement())
-  name        String   @unique
-  price       String
-  description String
-  category    Category @relation(fields: [categoryId], references: [id])
-  order       Order  @relation(fields: [orderId], references: [id])
-  categoryId  Int
-  orderId     Int
+  id           Int            @id @default(autoincrement())
+  name         String         @unique
+  price        String
+  description  String
+  category     Category?      @relation(fields: [categoryId], references: [id])
+  categoryId   Int?
+  ProductOrder ProductOrder[]
 }
 
 model Category {
@@ -43,10 +43,19 @@ model Category {
 }
 
 model Order {
-  id        Int       @id @default(autoincrement())
-  name      String    @unique
-  price     String
-  number    String
-  createdAt DateTime  @default(now())
-  products  Product[]
+  id        Int            @id @default(autoincrement())
+  createdAt DateTime       @default(now())
+  products  ProductOrder[]
+  User      User           @relation(fields: [userId], references: [id])
+  UserId    Int
+  userId    Int
+}
+
+model ProductOrder {
+  id        Int     @id @default(autoincrement())
+  Order     Order?  @relation(fields: [orderId], references: [id])
+  orderId   Int?
+  product   Product @relation(fields: [productId], references: [id])
+  productId Int
+  quantity  Int
 }
