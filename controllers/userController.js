@@ -1,4 +1,5 @@
 const { PrismaClient } = require("@prisma/client");
+const { createToken } = require('../utils/jwt');
 const prisma = new PrismaClient();
 
 // Getting users
@@ -98,10 +99,40 @@ async function deleteUser(req, res) {
     res.status(400).json({ status: 400, error: `${error.message}` });
   }
 }
+
+async function loginUser(req, res) {
+  // user should provide a username and password
+  let userDetails = req.body;
+  //check if user exists and if their password matches the one in the database
+  try {
+    const user = await prisma.user.findUnique({
+      where: {
+        email: userDetails.email,
+      },
+    });
+    
+    
+    if (user && user.password === userDetails.password) {
+      let token = createToken({
+        id: user.id,
+        email: user.email,
+      });
+
+      res.status(200).json({ message: "Success", token });
+    } else
+      res
+        .status(404)
+        .json({ error: "User Not Found or Incorrect Password Provided" });
+  } catch (error) {
+    res.json({ errorObject: error.message });
+  }
+}
+
 module.exports = {
   getAllUsers,
   getOneUser,
   createUser,
   updateUser,
   deleteUser,
+  loginUser,
 };

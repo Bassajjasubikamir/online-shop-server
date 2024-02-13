@@ -13,7 +13,7 @@ datasource db {
 model User {
   id       Int     @id @unique @default(autoincrement())
   name     String  @db.VarChar(50)
-  email    String  @unique @db.VarChar(50)
+  email    String  @unique @db.VarChar(50) 
   password String  @db.VarChar(50)
   phone    String
   role     Role    @default(Admin)
@@ -47,8 +47,8 @@ model Order {
   createdAt DateTime       @default(now())
   products  ProductOrder[]
   User      User           @relation(fields: [userId], references: [id])
-  UserId    Int
-  userId    Int
+  userId    Int            @unique 
+ 
 }
 
 model ProductOrder {

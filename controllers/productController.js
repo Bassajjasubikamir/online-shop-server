@@ -14,22 +14,22 @@ async function getAllProducts(req, res) {
 
   async function createProduct(req, res) {
     try {
-        console.log(req.body)
-        const { name, price, description, categoryId, orderId } = req.body;
+        // console.log(req.body)
+        const { name, price, description, categoryId } = req.body;
         //check data is valid
-        // if (!name || !price || !description || !categoryId || !orderId ) {
-        //   return res
-        //     .status(400)
-        //     .json({ status: 400, msg: "Missing or empty fields" });
-        // }
-        //check if product exists
-        // const productExists = await prisma.product.findUnique({ where: { name:name } });
+        if (!name || !price || !description || !categoryId) {
+          return res
+            .status(400)
+            .json({ status: 400, msg: "Missing or empty fields" });
+        }
+        // check if product exists
+        const productExists = await prisma.product.findUnique({ where: { name:name } });
     
-        // if (productExists) {
-        //   return res
-        //     .status(400)
-        //     .json({ status: 400, msg: "Record already exists" });
-        // }
+        if (productExists) {
+          return res
+            .status(400)
+            .json({ status: 400, msg: "Record already exists" });
+        }
         //save to database
         // console.log(newProduct)
         const newProduct = await prisma.product.create({
@@ -38,7 +38,6 @@ async function getAllProducts(req, res) {
             price: price.trim(),
             description: description.trim(),
             categoryId: Number(categoryId),
-            orderId: Number(orderId)
             },
         });
         res.status(201).json({ message: "Registered successfully", newProduct });
