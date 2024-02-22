@@ -27,7 +27,7 @@ enum Role {
 }
 
 model Product {
-  id           Int            @id @default(autoincrement())
+  id           Int            @id @unique @default(autoincrement())
   name         String         @unique
   price        String
   description  String

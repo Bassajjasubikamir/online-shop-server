@@ -8,8 +8,20 @@ async function getAllProducts(req, res) {
   }
 
   async function getOneProduct(req, res) {
-    const products = await prisma.product.findMany();
-    res.send(products);
+    try {
+      const id = parseInt(req.params.id);
+      const productExists = await prisma.product.findUnique({
+        where: { id },
+      });
+  
+      if (!productExists) {
+        return res.status(404).json({ error: "Record does't exist" });
+      }
+      return res.status(200).json({ data: productExists });
+    } catch (error) {
+      console.log(error);
+      res.status(400).json({ status: 400, error: `${error.message}` });
+    }
   }
 
   async function createProduct(req, res) {
@@ -48,13 +60,44 @@ async function getAllProducts(req, res) {
   }
 
   async function updateProduct(req, res) {
-    const Products = await prisma.product.findMany();
-    res.send(Products);
+    try {
+      const id = parseInt(req.params.id);
+      const productExists = await prisma.product.findUnique({ where: { id } });
+  
+      if (!productExists) {
+        return res.status(404).json({ error: "Record doesn't exist" });
+      }
+      const updateProduct = await prisma.product.update({
+        where: { id },
+        data: req.body,
+      });
+      return res
+        .status(200)
+        .json({ status: 200, msg: "Record updated", data: updateProduct });
+    } catch (error) {
+      console.log(error);
+      res.status(400).json({ status: 400, error: `${error.message}` });
+    }
   }
 
   async function deleteProduct(req, res) {
-    const Products = await prisma.product.findMany();
-    res.send(Products);
+    try {
+      const id = parseInt(req.params.id);
+      const productExists = await prisma.product.findUnique({ where: { id } });
+  
+      if (!productExists) {
+        return res.status(404).json({ error: "Record doesn't exist" });
+      }
+      await prisma.product.delete({
+        where: { id },
+      });
+      return res
+        .status(200)
+        .json({ status: 200, msg: "Record deleted successfully" });
+    } catch (error) {
+      console.log(error);
+      res.status(400).json({ status: 400, error: `${error.message}` });
+    }
   }
 module.exports = {getAllProducts,
                  getOneProduct,

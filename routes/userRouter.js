@@ -11,7 +11,4 @@ router.put('/:id',  updateUser)
 router.delete('/:id', deleteUser)
 router.post('/login', loginUser)
 
-
-
-
 module.exports = router;
