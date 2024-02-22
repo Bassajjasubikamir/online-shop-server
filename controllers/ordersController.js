@@ -29,16 +29,13 @@ async function createOrder(req, res) {
     // console.log(req.body)
     const {userId} = req.body;
     //check data is valid
-    if (!userId) {
+    if ( !userId) {
       return res
         .status(400)
         .json({ status: 400, msg: "Missing or empty fields" });
     }
     //check if user exists
-    const orderExists = await prisma.order.findUnique({
-      where: {userId:userId},
-      // rejectOnNotFound: true,
-    });
+    const orderExists = await prisma.order.findUnique({ where: { userId:userId } });
 
     if (orderExists) {
       return res
@@ -46,10 +43,13 @@ async function createOrder(req, res) {
         .json({ status: 400, msg: "Record already exists" });
     }
     //save to database
+   
     const newOrder = await prisma.order.create({
+      
       data: {
-        userId: Number(userId),
-      },
+
+          userId: Number(userId)
+        },
     });
     res.status(201).json({ message: "Registered successfully", newOrder });
   } catch (err) {
