@@ -36,7 +36,7 @@ async function createOrder(req, res) {
     }
     //check if user exists
     const orderExists = await prisma.order.findUnique({
-      where: { userId: userId },
+      where: { userId: +userId },
     });
 
     if (orderExists) {
